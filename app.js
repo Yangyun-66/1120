@@ -6,7 +6,7 @@ import {
 } from "firebase/ai";
 import {
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithPopup, signInWithRedirect,
   signOut,
 } from "firebase/auth";
 import {
@@ -670,7 +670,7 @@ function getSignInErrorMessage(error) {
 $("#googleSignInBtn").addEventListener("click", async () => {
   $("#authError").textContent = "";
   try {
-    await signInWithPopup(auth, googleProvider);
+    await ((window.matchMedia("(pointer: coarse)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) ? signInWithRedirect(auth, googleProvider) : signInWithPopup(auth, googleProvider).catch((error) => error.code === "auth/popup-blocked" ? signInWithRedirect(auth, googleProvider) : Promise.reject(error)));
   } catch (error) {
     console.error("Google sign-in failed", error);
     $("#authError").textContent = getSignInErrorMessage(error);
